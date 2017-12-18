@@ -1,0 +1,96 @@
+<html>
+<head>
+    <title>Hello world example</title>
+    <meta name="decorator" content="atl.general">
+    <script>
+        AJS.$(document).ready(function () {
+//            AJS.tablessortable.setTableSortable(AJS.$("#sortedTable"));
+            function ajaxReqForIssueDelete(issId) {
+                jQuery.ajax({
+                    type: "delete",
+                    url: "demoservlet?key=" + issId,
+                    success: function (data) {
+                        console.log(JSON.stringify(data));
+                    },
+                    error: function () {
+                        console.log('error', arguments);
+                    }
+                });
+            }
+
+            function removeIssueFromPage(issId){
+                $("table#sortedTable").find("[data-issueid='" + issId + "']").closest("tr.issueRow").remove();
+            }
+
+            $("input#selectAll").click(function () {
+                $("input.selectIssue").prop("checked", $(this).prop("checked"));
+            })
+
+            $("input.selectIssue").change(function () {
+                if (!$(this).prop("checked")) {
+                    $("input#selectAll").prop("checked", false);
+                }
+            })
+
+            $('button#deleteIssues').click(function () {
+                var checkedValues = $('input:checkbox:checked').map(function () {
+                    return $(this).data("issueid");
+                }).get();
+                /*checkedValues.forEach(function (item, i, arr) {
+                    if (i + 1 == 1) {
+                        url = ("key" + (i + 1) + "=" + item + "&");
+                    }
+                    else if (i + 1 != checkedValues.length && checkedValues.length > 1) {
+                        console.log('L=' + checkedValues.length);
+                        url += ("key" + (i + 1) + "=" + item + "&");
+                    } else {
+                        url += ("key" + (i + 1) + "=" + item);
+                    }
+                });*/
+                ajaxReqForIssueDelete(checkedValues);
+            })
+        });
+
+    </script>
+</head>
+<body class="page-type-admin">
+<div class="content-container">
+    <div class="content-body">
+        <h1>You've Got #if($issues.size()==0)<span style="color:red">NO</span>#end Issues!</h1>
+        #if ($issues.size() > 0)
+            <button id="deleteIssues">Delete</button>
+            <div class="issues">
+                <table id="sortedTable" class="aui aui-table-sortable">
+                    <thead>
+                    <tr>
+                        <th>
+                            <input type="checkbox" id="selectAll">
+                        </th>
+                        <th class="aui-table-column-issue-key">Issue key</th>
+                        <th>Name</th>
+                        <th class="aui-table-column-unsortable">Description</th>
+                    <tr>
+                    </thead>
+                    <tbody>
+                        #foreach( $issue in $issues )
+                        <tr class="issueRow">
+                            <td>
+                                <input type="checkbox" class="selectIssue" data-issueid="$issue.getId()">
+                            </td>
+                            <td>$issue.getKey()</td>
+                            <td>$issue.getSummary()</td>
+                            <td>
+                                #if($issue.getDescription())
+                                $issue.getDescription()
+                            #end
+                            </td>
+                        </tr>
+                        #end
+                    </tbody>
+                </table>
+            </div>
+        #end
+    </div>
+</div>
+</body>
+</html>

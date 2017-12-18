@@ -1,5 +1,8 @@
 package ua.oleksiiholyk.model;
 
+import com.atlassian.jira.util.json.JSONException;
+import com.atlassian.jira.util.json.JSONObject;
+
 /**
  * Created by Oleksii on 18.12.2017.
  */
@@ -36,9 +39,22 @@ public class OperationResponseJSON {
         this.userId = userId;
     }
 
+    public JSONObject toJSON() {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("userId", this.getUserId());
+            jsonObject.put("operationStatus", this.isOperationStatus());
+            jsonObject.put("operationError", this.getOperationError());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return jsonObject;
+    }
+
     @Override
     public String toString() {
-        return "{" +
+        return "OperationResponseJSON{" +
                 "userId=" + userId +
                 ", operationStatus=" + operationStatus +
                 ", operationError='" + operationError + '\'' +

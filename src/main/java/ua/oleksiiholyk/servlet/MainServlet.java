@@ -75,7 +75,7 @@ public class MainServlet extends HttpServlet {
                         orj.setOperationStatus(false);
                         orj.setOperationError(result.getErrorCollection().getErrors().get(0));
                     } else {
-//                issueService.delete(user, result);
+                        issueService.delete(user, result);
                         orj.setOperationStatus(true);
                         orj.setOperationError("");
                     }
@@ -83,7 +83,7 @@ public class MainServlet extends HttpServlet {
                     orj.setOperationStatus(false);
                     orj.setOperationError("Couldn't find issue");
                 }
-                issuesJSON.put(orj);
+                issuesJSON.put(orj.toJSON());
             }
         } else {
             System.out.println("nothing");
